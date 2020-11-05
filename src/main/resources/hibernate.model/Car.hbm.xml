@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping xmlns="http://www.hibernate.org/xsd/hibernate-mapping">
+
+    <!-- Путь где лежит таблица и название таблицы   -->
+    <class name="hibernate.model.Car" table="cars">
+
+        <!-- name - относится к названию полей в классе и должны совпадать
+        column - относится к полям базы данных и должны совпадать   -->
+        <id name="id" column="id">
+            <generator class="identity"/>
+        </id>
+
+        <property name="cost" column="cost"/>
+        <property name="mark" column="mark"/>
+
+        <!-- Прикрепляем машины к к двигателям.
+        name="engines" - поле которое должно заполнится в классе
+        table="cars_engines" - к какой таблице мапимся
+        lazy="true" - мф ленивые и не будем дергать все данные, только если надо
+        fetch="join" - будем делать не множественные запросы, а получить все одним запросом
+        cascade="none" - получение будет каскадным потому что - fetch="join",
+        а вот при редактировании и удалении ничего каскадом из этих функций происходить не будет
+        (Основные настройки под задачи - смотреть доки) -->
+        <set name="engines" table="cars_engines" lazy="true" fetch="join" cascade="none">
+
+            <!-- Поле для маппинга со стороны Car к соединительной таблице -->
+            <key>
+                <column name="car_id" not-null="true" />
+            </key>
+
+            <!-- Поле для маппинга со стороны Engine к соединительной таблице -->
+            <many-to-many class="hibernate.model.Engine">
+                <column name="engine_id" not-null="true" />
+            </many-to-many>
+        </set>
+    </class>
+</hibernate-mapping>
